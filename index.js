@@ -20,7 +20,7 @@ type SerializeableObject = {
 };
 */
 
-class StreamError extends Error {
+class ProjectorError extends Error {
   /*::
   code: number;
   stderr: string;
@@ -52,14 +52,16 @@ function projector(script /*: string */, exportName /*: string */, opts /*: Seri
       if (code === 0) {
         resolve(stdout ? JSON.parse(stdout) : {});
       } else {
-        reject(new StreamError('Process errored with non-zero exit code.', code, stderr));
+        reject(new ProjectorError('Process errored with non-zero exit code.', code, stderr));
       }
     });
-  
+
     child.stdin.setDefaultEncoding('utf8');
     child.stdin.write(JSON.stringify(opts));
     child.stdin.end();
   });
 }
+
+projector.ProjectorError = ProjectorError;
 
 module.exports = projector;
