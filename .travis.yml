@@ -2,4 +2,4 @@ language: node_js
 node_js:
   - '7'
 cache: yarn
-script: yarn ci
+script: yarn test -- --runInBand --coverage && yarn flow

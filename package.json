@@ -4,16 +4,14 @@
   "main": "index.js",
   "author": "James Kyle <me@thejameskyle.com>",
   "license": "MIT",
-  "description": "Run scripts with async functions",
+  "description": "",
   "repository": "projectorjs/projector",
   "files": [
     "index.js",
-    "child.js",
-    "bin.js"
+    "child.js"
   ],
   "scripts": {
-    "test": "jest",
-    "ci": "yarn test -- --runInBand --coverage && yarn flow"
+    "test": "jest"
   },
   "devDependencies": {
     "flow-bin": "^0.47.0",
