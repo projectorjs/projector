@@ -2,7 +2,7 @@
 'use strict';
 
 const path = require('path');
-const child = require('child_process');
+const crossSpawn = require('cross-spawn');
 
 const CHILD_SCRIPT = path.join(__dirname, 'child.js');
 
@@ -38,7 +38,7 @@ class ChildError extends Error {
 
 function spawn(bin /*: string */, args /*: Array<string> */, opts /*: SpawnOptions */ = {}) {
   return new Promise((resolve, reject) => {
-    let spawned = child.spawn(bin, args);
+    let spawned = crossSpawn(bin, args);
 
     let stdout = '';
     spawned.stdout.setEncoding('utf8');

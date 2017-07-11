@@ -16,5 +16,8 @@
   "devDependencies": {
     "flow-bin": "^0.47.0",
     "jest": "^20.0.4"
+  },
+  "dependencies": {
+    "cross-spawn": "^5.1.0"
   }
 }
