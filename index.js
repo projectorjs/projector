@@ -2,7 +2,7 @@
 'use strict';
 
 const path = require('path');
-const {spawn} = require('child_process');
+const child = require('child_process');
 
 const CHILD_SCRIPT = path.join(__dirname, 'child.js');
 
@@ -18,6 +18,10 @@ type Serializeable =
 type SerializeableObject = {
   [key: string]: Serializeable,
 };
+
+type SpawnOptions = {
+  stdin?: string,
+}
 */
 
 class ChildError extends Error {
@@ -32,23 +36,23 @@ class ChildError extends Error {
   }
 }
 
-function projector(script /*: string */, exportName /*: string */, opts /*: SerializeableObject */ = {}) {
+function spawn(bin /*: string */, args /*: Array<string> */, opts /*: SpawnOptions */ = {}) {
   return new Promise((resolve, reject) => {
-    let child = spawn('node', [CHILD_SCRIPT, script, exportName]);
+    let spawned = child.spawn(bin, args);
 
     let stdout = '';
-    child.stdout.setEncoding('utf8');
-    child.stdout.on('data', chunk => {
+    spawned.stdout.setEncoding('utf8');
+    spawned.stdout.on('data', chunk => {
       stdout += chunk.toString();
     });
 
     let stderr = '';
-    child.stderr.setEncoding('utf8');
-    child.stderr.on('data', chunk => {
+    spawned.stderr.setEncoding('utf8');
+    spawned.stderr.on('data', chunk => {
       stderr += chunk.toString();
     });
 
-    child.on('close', code => {
+    spawned.on('close', code => {
       if (code === 0) {
         resolve(stdout ? JSON.parse(stdout) : {});
       } else {
@@ -56,12 +60,19 @@ function projector(script /*: string */, exportName /*: string */, opts /*: Seri
       }
     });
 
-    child.stdin.setDefaultEncoding('utf8');
-    child.stdin.write(JSON.stringify(opts));
-    child.stdin.end();
+    spawned.stdin.setDefaultEncoding('utf8');
+    if (opts.stdin) spawned.stdin.write(opts.stdin);
+    spawned.stdin.end();
   });
 }
 
+function projector(script /*: string */, exportName /*: string */, opts /*: SerializeableObject */ = {}) {
+  return spawn('node', [CHILD_SCRIPT, script, exportName], {
+    stdin: JSON.stringify(opts)
+  });
+}
+
+projector.spawn = spawn;
 projector.ChildError = ChildError;
 
 module.exports = projector;
