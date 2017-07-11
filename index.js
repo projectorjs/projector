@@ -54,7 +54,7 @@ function spawn(bin /*: string */, args /*: Array<string> */, opts /*: SpawnOptio
 
     spawned.on('close', code => {
       if (code === 0) {
-        resolve(stdout ? JSON.parse(stdout) : {});
+        resolve(stdout);
       } else {
         reject(new ChildError('Process errored with non-zero exit code.', code, stderr));
       }
@@ -69,6 +69,8 @@ function spawn(bin /*: string */, args /*: Array<string> */, opts /*: SpawnOptio
 function projector(script /*: string */, exportName /*: string */, opts /*: SerializeableObject */ = {}) {
   return spawn('node', [CHILD_SCRIPT, script, exportName], {
     stdin: JSON.stringify(opts)
+  }).then(stdout => {
+    return stdout ? JSON.parse(stdout) : {};
   });
 }
 
