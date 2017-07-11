@@ -1,32 +1,44 @@
 // @flow
 'use strict';
 
+process.title = 'projector-child';
+
+if (typeof process.send !== 'function') {
+  throw new Error('Must execute with an IPC channel, i.e. process.fork()');
+}
+
 const unsafe_require = require;
 
-process.title = 'projector-child';
-process.stdin.setEncoding('utf8');
+function send(status, payload) {
+  (process /*: any */).send({ status, payload });
+}
 
-let [script, exportName] = process.argv.slice(2);
+function close(status, payload) {
+  send(status, payload);
+  (process /*: any */).disconnect();
+}
 
-let stdin = '';
-process.stdin.on('data', chunk => {
-  stdin += chunk;
-});
+function error(err) {
+  close('error', {
+    message: err.message,
+    stack: err.stack,
+  });
+}
 
-process.stdin.on('end', () => {
-  let opts = JSON.parse(stdin);
+process.on('message', ({ script, exportName, opts }) => {
   let mod = unsafe_require(script);
   let fn = mod[exportName];
 
   if (!fn) {
-    throw new Error(`Module "${script}" does not have export named "${exportName}"`);
+    error(new Error(`Module "${script}" does not have export named "${exportName}"`));
+    return;
   }
 
   fn(opts).then(res => {
-    process.stdout.write(JSON.stringify(res));
-    process.exit(0);
+    close('complete', res);
   }).catch(err => {
-    process.stderr.write(err.stack);
-    process.exit(1);
+    error(err);
   });
 });
+
+send('ready');

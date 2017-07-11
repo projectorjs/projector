@@ -23,14 +23,12 @@ test('on success', () => {
 
 test('on failure', () => {
   return projector(FIXTURE, FAILURE_EXPORT, MOCK_OPTIONS).then(expectError, err => {
-    expect(err.message).toEqual('Process errored with non-zero exit code.');
-    expect(err.code).toEqual(1);
-    expect(err.stderr).toContain(MOCK_ERROR);
+    expect(err.message).toEqual(MOCK_ERROR);
   });
 });
 
 test('on missing export', () => {
   return projector(FIXTURE, MISSING_EXPORT, MOCK_OPTIONS).then(expectError, err => {
-    expect(err.stderr).toContain(`Module "${FIXTURE}" does not have export named "${MISSING_EXPORT}"`);
+    expect(err.message).toContain(`Module "${FIXTURE}" does not have export named "${MISSING_EXPORT}"`);
   });
 });
