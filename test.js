@@ -15,20 +15,20 @@ let expectError = () => {
 };
 
 test('on success', () => {
-  return projector(FIXTURE, SUCCESS_EXPORT, MOCK_OPTIONS).then(result => {
+  return projector(FIXTURE, SUCCESS_EXPORT, [MOCK_OPTIONS]).then(result => {
     expect(result.MOCK_RUN).toBe(true);
     expect(result.MOCK_OPTIONS).toEqual(MOCK_OPTIONS);
   });
 });
 
 test('on failure', () => {
-  return projector(FIXTURE, FAILURE_EXPORT, MOCK_OPTIONS).then(expectError, err => {
+  return projector(FIXTURE, FAILURE_EXPORT, [MOCK_OPTIONS]).then(expectError, err => {
     expect(err.message).toEqual(MOCK_ERROR);
   });
 });
 
 test('on missing export', () => {
-  return projector(FIXTURE, MISSING_EXPORT, MOCK_OPTIONS).then(expectError, err => {
+  return projector(FIXTURE, MISSING_EXPORT, [MOCK_OPTIONS]).then(expectError, err => {
     expect(err.message).toContain(`Module "${FIXTURE}" does not have export named "${MISSING_EXPORT}"`);
   });
 });

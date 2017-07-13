@@ -20,7 +20,7 @@ type SerializeableObject = {
 };
 */
 
-function projector(script /*: string */, exportName /*: string */, opts /*: SerializeableObject */ = {}) {
+function projector(script /*: string */, exportName /*: string */, args /*: Array<SerializeableObject> */ = []) {
   return new Promise((resolve, reject) => {
     let proc = child.fork(CHILD_SCRIPT, {
       silent: false
@@ -28,7 +28,7 @@ function projector(script /*: string */, exportName /*: string */, opts /*: Seri
 
     proc.on('message', ({ status, payload }) => {
       if (status === 'ready') {
-        proc.send({ script, exportName, opts });
+        proc.send({ script, exportName, args });
       } else if (status === 'complete') {
         resolve(payload);
       } else if (status === 'error') {
@@ -36,7 +36,7 @@ function projector(script /*: string */, exportName /*: string */, opts /*: Seri
         err.stack = payload.stack;
         reject(err);
       } else {
-        reject(new Error('Recieved unknown message from '))
+        reject(new Error('Recieved unknown message from child process.'));
       }
     });
 
