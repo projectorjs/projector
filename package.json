@@ -1,11 +1,10 @@
 {
   "name": "projector",
-  "version": "2.0.0",
-  "description": "Create complex build systems with ease",
+  "version": "3.0.0",
+  "description": "",
   "main": "index.js",
   "author": "James Kyle <me@thejameskyle.com>",
   "license": "MIT",
-  "description": "",
   "repository": "projectorjs/projector",
   "files": [
     "index.js",
