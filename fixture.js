@@ -1,9 +1,37 @@
 'use strict';
 
-exports.SUCCESS_EXPORT = async (opts = {}) => {
-  return { MOCK_RUN: true, MOCK_OPTIONS: opts };
+function record(name, ...args) {
+  return new Promise(resolve => {
+    resolve({
+      MOCK_RUN: true,
+      EXPORT_NAME: name,
+      MOCK_ARGS: args,
+    });
+  });
+}
+
+exports.default = (...args) => {
+  return new Promise(resolve => {
+    resolve({
+      MOCK_RUN: true,
+      EXPORT_NAME: 'default',
+      MOCK_ARGS: args,
+    });
+  });
 };
 
-exports.FAILURE_EXPORT = async (opts = {}) => {
-  throw new Error('MOCK_ERROR');
+exports.named = (...args) => {
+  return new Promise(resolve => {
+    resolve({
+      MOCK_RUN: true,
+      EXPORT_NAME: 'named',
+      MOCK_ARGS: args,
+    });
+  });
+};
+
+exports.error = () => {
+  return new Promise(() => {
+    throw new Error('MOCK_ERROR');
+  });
 };

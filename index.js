@@ -13,14 +13,38 @@ type Serializeable =
   | boolean
   | string
   | Array<Serializeable>
-  | SerializeableObject;
+  | { [key: string]: Serializeable };
 
-type SerializeableObject = {
-  [key: string]: Serializeable,
-};
+type Projector =
+  & ((script: string, args?: Array<Serializeable>) => Promise<Serializeable>)
+  & ((script: string, exportName: string, args?: Array<Serializeable>) => Promise<Serializeable>);
 */
 
-function projector(script /*: string */, exportName /*: string */, args /*: Array<SerializeableObject> */ = []) {
+function projector(script, exportName, args) {
+  if (arguments.length === 1) {
+    exportName = 'default';
+    args = [];
+  } else if (arguments.length === 2) {
+    if (typeof exportName === 'object') {
+      args = exportName;
+      exportName = 'default';
+    } else {
+      args = [];
+    }
+  }
+
+  if (typeof script !== 'string') {
+    throw new Error('Projector script must be a string');
+  }
+
+  if (typeof exportName !== 'string') {
+    throw new Error('Projector export name must be a string');
+  }
+
+  if (!Array.isArray(args)) {
+    throw new Error('Projector `args` must be an array');
+  }
+
   return new Promise((resolve, reject) => {
     let proc = child.fork(CHILD_SCRIPT, {
       silent: false
@@ -46,4 +70,4 @@ function projector(script /*: string */, exportName /*: string */, args /*: Arra
   });
 }
 
-module.exports = projector;
+module.exports = (projector /*: Projector */);
