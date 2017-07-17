@@ -17,7 +17,7 @@ type Serializeable =
 
 type Projector =
   & ((script: string, args?: Array<Serializeable>) => Promise<Serializeable>)
-  & ((script: string, exportName: string, args?: Array<Serializeable>) => Promise<Serializeable>);
+  & ((script: string, exportName?: string, args?: Array<Serializeable>) => Promise<Serializeable>);
 */
 
 function projector(script, exportName, args) {
@@ -31,6 +31,8 @@ function projector(script, exportName, args) {
     } else {
       args = [];
     }
+  } else if (typeof exportName === 'undefined') {
+    exportName = 'default';
   }
 
   if (typeof script !== 'string') {

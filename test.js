@@ -42,6 +42,15 @@ test('projector(script, exportName, args)', () => {
   });
 });
 
+test('projector(script, undefined, args)', () => {
+  return projector(FIXTURE, undefined, MOCK_ARGS).then(res => {
+    expect(res.MOCK_RUN).toBe(true);
+    expect(res.EXPORT_NAME).toBe('default');
+    expect(res.MOCK_ARGS).toEqual(MOCK_ARGS);
+  });
+});
+
+
 test('error on non-string fixture', () => {
   expect(() => {
     projector(42);
