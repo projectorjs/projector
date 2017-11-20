@@ -66,7 +66,8 @@ function projector(script, exportName, args) {
       }
     });
 
-    proc.on('close', () => {
+    proc.on("close", (s, closeType /*: string */) => {
+      if (closeType === 'SIGINT') resolve('process exited by user command');
       reject(new Error('Never recieved a response from child process.'));
     });
   });
